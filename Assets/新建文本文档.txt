@@ -1,0 +1,127 @@
+
+fullscreen = true时 一些窗体函数无效   且会把小分辨率拉为全屏
+
+PlayerPrefs.GetInt("Screenmanager Resolution Width Default");
+PlayerPrefs.GetInt("Screenmanager Resolution Height Default");
+获取打包时项目分辨率
+
+
+//删除上次分辨率信息
+PlayerPrefs.DeleteKey("Screenmanager Resolution Width");
+PlayerPrefs.DeleteKey("Screenmanager Resolution Height");
+
+
+Screen.SetResolution() ：
+若注册表分辨率和要设置分辨率相同不会执行
+设置的分辨率超出显示器支持的分辨率，则按照可支持的最大来设置，不能自主设置
+
+Screen.SetResolution(x,y,false) ：
+显示标题栏，窗体的尺寸就是x,y；标题栏尺寸是独立的
+
+1.单独设置窗口的标题栏，会影响程序窗体尺寸；需要在设置完之后重新设置尺寸
+2.Screen.SetResolution(x,y,false)：不会影响修改过的窗体效果，能够用来设置尺寸
+3.目前不清楚窗体api的执行时机，顺序执行时Screen.SetResolution会与winapi互相干扰，所以只能延时执行。[执行时机不安全]
+
+问题：
+fullscreen打包。第一次打开程序，Screen.SetResolution(x,y,false)会一直带着标题栏；第二次打开正常
+windowed打包。先Screen.SetResolution(x,y,false)，可正常改变；  先隐藏标题栏，再Screen.SetResolution(x,y,false)会一直带标题栏
+
+解决方式：
+选windowed打包，且项目启动首先执行一次Screen.SetResolution(x,y,false)
+
+
+22222
+使用winapi来修改窗口大小，则只能在无边框样式下，屏幕尺寸和设置尺寸一致；带边框会占用尺寸
+
+unityApi设置样式前，需要保证分辨率已经修改！！
+
+///////不做过多深入的情况下：
+1.必须选择windowed打包；取消勾选Resizable Window；(可选勾选上Allow FullScreen Swith)
+2.不带标题栏 可用winapi设置大小 (最好只用winapi)
+3.带标题栏 需要用Screen.SetResolution方法  (最好在屏幕分辨率内且用unityapi)
+
+
+unity打包选项中，有些参数会影响窗体样式，例如：勾选Resizable Window;只去掉标题栏的话会有移动边框
+
+
+
+三种无标题栏效果：
+1： 
+swl_value = WinApi.GetWindowLong(hwnd, WinApi.GWL_STYLE);
+swl_value &= ~WinApi.WS_CAPTION;//无标题栏
+//最合适的，但是会受原窗口样式影响，如果原不仅仅有标题栏，还有移动边框，则还需要其他修改
+//unity项目，选windows打包，且不勾选Resizable window  可用
+
+2:
+swl_value = 1; //不懂这个样式具体是什么，效果刚好是需要的效果。
+//最简单的，直接=1，无边框
+
+3:
+swl_value = WS_POPUP
+//能够实现效果，但原理不是为了实现效果
+
+======窗口大小
+
+
+
+
+
+
+
+
+
+九宫格点位
+
+======窗口位置
+
+
+四种层级
+
+======窗口层级
+
+
+
+如果窗体是显示在桌面的，则，隐藏窗体后，GPU和CPU占用会飙升
+将窗体先最小化，然后再隐藏窗体，会避免飙升的情况！
+
+避免窗口丢失
+
+======窗口显隐
+
+======窗口兼容显示器分辨率(超出就按最短边来)
+
+
+
+
+
+需要注意避免显隐的飙升情况
+避免多开
+======系统托盘
+
+
+WS_EX_LAYERED需要搭配窗口分形效果，才能实现穿透
+======鼠标穿透
+
+1.摄像机选solid color
+2.颜色必须选黑色(剔除好像是按照颜色加减来的，只会把黑的部分剔除)
+3.player setting 必须取消勾选Use DXGI Flip....D3D11选项
+======窗口透明
+
+
+
+1.项目注册表信息处理
+
+2.启动项注册表信息处理
+注册表信息
+
+
+最小化
+边框标题栏
+窗口
+全屏
+
+
+
+
+
+影响测试
