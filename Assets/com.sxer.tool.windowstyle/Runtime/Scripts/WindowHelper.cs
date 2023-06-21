@@ -452,6 +452,9 @@ namespace Sxer.Tool.WindowStyle
             _systemTray.AddMenuItem("显示", () => {
                 WindowShowSet(WindowHelper.WindowStyleName.ShowRestore2);
             });
+            _systemTray.AddMenuItem("缩小", () => {
+                WindowShowSet(WindowHelper.WindowStyleName.ShowMinimized);
+            });
             _systemTray.AddMenuItem("隐藏", () => {
                 WindowShowSet(WindowHelper.WindowStyleName.ShowHide);
             });
